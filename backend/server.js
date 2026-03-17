@@ -117,7 +117,7 @@ const upload = multer({
 // Register Student
 // ======================
 
-app.post("/api/register", upload.single("receipt"), async (req, res) => {
+app.post("/api/registrations", upload.single("receipt"), async (req, res) => {
 
     try {
 
