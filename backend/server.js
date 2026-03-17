@@ -164,8 +164,8 @@ app.post("/register", upload.single("receipt"), async (req, res) => {
 // Start Server
 // ======================
 
-app.listen(process.env.port || 5000, () => {
-
+app.listen(process.env.PORT || 5000, () => {
+    
     console.log("Server running on http://localhost:5000");
 
 });
