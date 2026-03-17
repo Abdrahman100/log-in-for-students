@@ -129,7 +129,7 @@ form.addEventListener("submit", function (e) {
     // 7️⃣ Send Data to Server
     // إرسال البيانات إلى السيرفر وعرض رسالة النجاح أو الخطأ
     // ==========================
-    fetch("/register", {
+    fetch("/api/register", {
       method: "POST",
       body: formData
     })
