@@ -4,7 +4,7 @@ const mobileCards = document.querySelector(".mobile-cards");
 // جلب الطلاب من السيرفر
 async function fetchStudents() {
   try {
-    const res = await fetch("http://localhost:5000/api/students");
+    const res = await fetch("/api/students");
     const students = await res.json();
 
     tbody.innerHTML = "";
@@ -61,7 +61,7 @@ onclick="openImage(this.src)"
 async function deleteStudent(id) {
   if (!confirm("هل أنت متأكد من حذف الطالب؟")) return;
 
-  await fetch(`http://localhost:5000/api/students/${id}`, {
+  await fetch(`/api/students/${id}`, {
     method: "DELETE"
   });
 
