@@ -119,7 +119,7 @@ form.addEventListener("submit", function (e) {
     // ==========================
     // 7️⃣ Send Data to Server
     // ==========================
-    const API_URL = window.location.origin + "/api/registrations";
+    const API_URL = window.location.origin + "/api/register";
 
     fetch(API_URL, {
       method: "POST",
