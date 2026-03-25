@@ -22,23 +22,24 @@ const fileInput = document.getElementById('file-upload');
 const dropZone = fileInput.closest('.drop-zone');
 
 fileInput.addEventListener('change', () => {
-  dropZone.classList.toggle('uploaded', fileInput.files.length > 0);
+  if (fileInput.files.length > 0) {
+    dropZone.classList.add('uploaded'); // إضافة الكلاس لتغيير الشكل والرمز
+  } else {
+    dropZone.classList.remove('uploaded'); // العودة للوضع الأصلي إذا أزال المستخدم الملف
+  }
 });
 
 // ==========================
-// 3️⃣ Form Validation & Submission
+// 3️⃣ Form Validation
+// التحقق من صحة الفورم قبل الإرسال
 // ==========================
 const form = document.getElementById("form");
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-
   const btn = document.querySelector(".submit-btn");
   const span = btn.querySelector("span");
-
   let valid = true;
-
-  // عناصر الحقول
   const successful = document.getElementById("successful");
   const register = document.getElementById("register");
   const firstName = document.getElementById("firstName");
@@ -46,111 +47,114 @@ form.addEventListener("submit", function (e) {
   const phone = document.getElementById("phone");
   const level = document.getElementById("level");
 
-  // عناصر رسائل الأخطاء
   const firstNameError = document.getElementById("firstNameError");
   const lastNameError = document.getElementById("lastNameError");
   const phoneError = document.getElementById("phoneError");
-  let receiptError = document.getElementById("receiptError");
 
   // ==========================
-  // 4️⃣ Receipt Validation
+  // 4️⃣ Receipt Error Handling
+  // التحقق من رفع الصورة وإظهار رسالة الخطأ إذا لم يرفع المستخدم صورة
   // ==========================
+  const receiptError = document.getElementById("receiptError"); // إنشاء عنصر الخطأ في HTML
+
   if (fileInput.files.length === 0) {
     if (!receiptError) {
-      receiptError = document.createElement("small");
-      receiptError.id = "receiptError";
-      receiptError.className = "error active";
-      receiptError.textContent = "يجب رفع صورة الصك";
-      fileInput.parentElement.appendChild(receiptError);
+      const errorElem = document.createElement("small");
+      errorElem.id = "receiptError";
+      errorElem.className = "error active";
+      errorElem.textContent = "يجب رفع صورة الصك";
+      fileInput.parentElement.appendChild(errorElem);
     } else {
       receiptError.textContent = "يجب رفع صورة الصك";
       receiptError.classList.add("active");
     }
-    valid = false;
-  } else if (receiptError) {
-    receiptError.classList.remove("active");
+    valid = false; // تمنع الإرسال
+  } else {
+    if (receiptError) {
+      receiptError.classList.remove("active");
+    }
   }
 
   // ==========================
   // 5️⃣ Field Validation
+  // التحقق من باقي الحقول: الاسم الأول، اسم العائلة، ورقم الهاتف
   // ==========================
   if (firstName.value.trim() === "") {
     firstNameError.textContent = "الاسم الأول مطلوب";
     firstNameError.classList.add("active");
     valid = false;
-  } else {
-    firstNameError.classList.remove("active");
   }
 
   if (lastName.value.trim() === "") {
     lastNameError.textContent = "اسم العائلة مطلوب";
     lastNameError.classList.add("active");
     valid = false;
-  } else {
-    lastNameError.classList.remove("active");
   }
 
   if (phone.value.trim() === "") {
     phoneError.textContent = "رقم الهاتف مطلوب";
     phoneError.classList.add("active");
     valid = false;
-  } else if (!/^\d{10}$/.test(phone.value.trim())) {
+  }
+  if (phone.value.trim() !== "" && !/^\d{10}$/.test(phone.value.trim())) {
     phoneError.textContent = "رقم الهاتف غير صالح";
     phoneError.classList.add("active");
     valid = false;
-  } else {
-    phoneError.classList.remove("active");
   }
 
   // ==========================
   // 6️⃣ If All Valid - Prepare FormData
+  // تجهيز البيانات للإرسال إذا كل شيء صحيح
   // ==========================
   if (valid) {
+
+    firstNameError.classList.remove("active");
+    lastNameError.classList.remove("active");
+    phoneError.classList.remove("active");
+
     btn.disabled = true;
     span.textContent = "جاري التسجيل...";
     btn.classList.add("disabled");
 
-    const formData = new FormData();
-    formData.append("name", firstName.value + " " + lastName.value);
-    formData.append("phone", phone.value);
-    formData.append("level", level.value);
-    formData.append("receipt", fileInput.files[0]);
+    const fileInput = document.getElementById("file-upload")
+
+    const formData = new FormData()
+
+    formData.append("name", firstName.value + " " + lastName.value)
+    formData.append("phone", phone.value)
+    formData.append("level", level.value)
+    formData.append("receipt", fileInput.files[0])
 
     // ==========================
     // 7️⃣ Send Data to Server
+    // إرسال البيانات إلى السيرفر وعرض رسالة النجاح أو الخطأ
     // ==========================
-    const API_URL = window.location.origin + "/api/register";
-
-    fetch(API_URL, {
+    fetch("/register", {
       method: "POST",
       body: formData
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        console.log(data)
 
-        successful.classList.add("active");
-        register.classList.remove("active");
-        form.reset();
-        dropZone.classList.remove("uploaded");
+        successful.classList.add("active")
+        register.classList.remove("active")
 
-        btn.disabled = false;
-        span.textContent = "التسجيل في الدورة";
-        btn.classList.remove("disabled");
+        form.reset()
 
-        // عرض رسالة النجاح لمدة 3 ثواني
-        setTimeout(() => {
-          successful.classList.remove("active");
-          register.classList.add("active");
-        }, 3000);
+        btn.disabled = false
+        span.textContent = " التسجيل في الدورة"
+        btn.classList.remove("disabled")
+        successful.classList.remove("active")
+        register.classList.add("active")
       })
       .catch(err => {
-        console.error(err);
-        alert("حدث خطأ أثناء التسجيل");
+        console.error(err)
+        alert("حدث خطأ أثناء التسجيل")
 
-        btn.disabled = false;
-        span.textContent = "التسجيل في الدورة";
-        btn.classList.remove("disabled");
-      });
+        btn.disabled = false
+        span.textContent = " التسجيل في الدورة"
+        btn.classList.remove("disabled")
+      })
   }
 });

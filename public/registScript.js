@@ -3,8 +3,9 @@ const mobileCards = document.querySelector(".mobile-cards");
 
 // جلب الطلاب من السيرفر
 async function fetchStudents() {
+  const BASE_URL = window.location.origin;
   try {
-    const res = await fetch("/api/students");
+    const res = await fetch(`${BASE_URL}/api/students`);
     const students = await res.json();
 
     tbody.innerHTML = "";

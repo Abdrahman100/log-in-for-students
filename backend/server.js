@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(process.cwd(), 'public')));
+app.use(express.static(path.join(__dirname, "../public")))
 
 // ======================
 // Get Students
@@ -117,7 +117,7 @@ const upload = multer({
 // Register Student
 // ======================
 
-app.post("/api/register", upload.single("receipt"), async (req, res) => {
+app.post("/register", upload.single("receipt"), async (req, res) => {
 
     try {
 
@@ -165,7 +165,6 @@ app.post("/api/register", upload.single("receipt"), async (req, res) => {
 // ======================
 
 app.listen(process.env.PORT || 5000, () => {
-    
-    console.log("Server running on http://localhost:5000");
 
+    console.log(`Server is running on port ${process.env.PORT || 5000} // http://localhost:${process.env.PORT || 5000}`);
 });
